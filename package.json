@@ -1,0 +1,22 @@
+{
+  "name": "node.boilerplate",
+  "version": "0.0.1",
+  "author": {
+    "name": "Damian Michal Harasymczuk",
+    "email": "harasymczuk@contecht.eu",
+    "url": "https://github.com/dmh126"
+  },
+  "scripts": {
+    "development": "nodemon ./bin/www",
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "http": "0.0.0",
+    "morgan": "~1.8.1"
+  }
+}
