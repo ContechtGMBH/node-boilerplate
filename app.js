@@ -4,9 +4,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var flash = require('connect-flash');
+var session = require('express-session');
+var config = require('./config/config.js')
 
 var app = express();
+mongoose.connect(config.database.url);
 
+require('./config/authorization')(passport);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -14,7 +21,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 
-require('./routes.js')(app);
+app.use(session({ secret: config.database.secret }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+require('./routes/index.js')(app, passport);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
