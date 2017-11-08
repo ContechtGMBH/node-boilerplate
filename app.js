@@ -11,7 +11,7 @@ var session = require('express-session');
 var config = require('./config/config.js')
 
 var app = express();
-mongoose.connect(config.database.url);
+mongoose.connect(config.database.url, {useMongoClient: true});
 
 require('./config/authorization')(passport);
 
@@ -21,7 +21,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 
-app.use(session({ secret: config.database.secret }));
+app.use(session({
+  secret: config.database.secret,
+  resave: true,
+  saveUninitialized: true
+ }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
