@@ -1,6 +1,4 @@
 import { buildSchema } from 'graphql';
-import { GraphQLUpload } from 'graphql-upload'
-
 
 const usersSchema = buildSchema(`
 
@@ -120,7 +118,6 @@ async sendFile(e) {
 
 const root = {
 
-  Upload: GraphQLUpload,
   users: getUsers,
   user: getUser,
   createUser: createUser,
