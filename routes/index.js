@@ -1,12 +1,15 @@
 import express from 'express';
 import express_graphql from 'express-graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
+import upload from 'express-fileupload';
 
 import * as authentication from './authentication';
 import * as usersSchema from '../schemas/users';
 
 const v1 = express.Router();
 const v2 = express.Router();
+
+v1.use(upload());
 
 export default function(app, passport) {
 

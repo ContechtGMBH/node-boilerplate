@@ -12,7 +12,7 @@ import session from 'express-session';
 import config from './config/config';
 import setupPassport from './config/authorization';
 import createRoutes from './routes/index';
-import upload from 'express-fileupload';
+//import upload from 'express-fileupload';
 
 const app = express();
 mongoose.connect(config.database.url, {useMongoClient: true});
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
-app.use(upload());
+//app.use(upload());
 
 app.use(session({
   secret: config.database.secret,
