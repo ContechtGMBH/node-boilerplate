@@ -1,21 +1,16 @@
+export const login = (req, res) => {
+  res.json(req.user.id);
+}
 
-module.exports = {
+export const register = (req, res) => {
+  res.json(req.user.id);
+}
 
-    login: function(req,res){
-      res.json(req.user.id);
-    },
-
-    register: function(req,res){
-      res.json(req.user.id);
-    },
-
-    isLoggedIn: function(req, res) {
-      if (req.isAuthenticated()){
-        res.json(true)
-      } else {
-        res.json(false)
-      }
-
-    }
+export const isLoggedIn = (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(true)
+  } else {
+    res.json(false)
+  }
 
 }

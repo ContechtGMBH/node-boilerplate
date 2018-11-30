@@ -1,25 +1,31 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var flash = require('connect-flash');
-var session = require('express-session');
-var config = require('./config/config.js')
+//import {} from 'dotenv/config';
+import express from 'express';
+import path from 'path';
+import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import passport from 'passport';
+import flash from 'connect-flash';
+import session from 'express-session';
+import config from './config/config';
+import setupPassport from './config/authorization';
+import createRoutes from './routes/index';
+import upload from 'express-fileupload';
 
-var app = express();
+const app = express();
 mongoose.connect(config.database.url, {useMongoClient: true});
+mongoose.Promise = require('bluebird');
 
-require('./config/authorization')(passport);
+setupPassport(passport);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
+app.use(upload());
 
 app.use(session({
   secret: config.database.secret,
@@ -30,24 +36,30 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-require('./routes/index.js')(app, passport);
+createRoutes(app, passport);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+app.use( (req, res, next) => {
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use( (err, req, res, next) => {
   // set locals, only providing error in development
+  const env = req.app.get('env');
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = env === 'development' ? err : {};
+
+  if (env !== 'test') console.log(err);
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send({
+    message: res.locals.message,
+    error: res.locals.error
+  });
 });
 
-module.exports = app;
+export default app;

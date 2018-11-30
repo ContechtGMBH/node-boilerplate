@@ -1,32 +1,52 @@
-var express_graphql = require('express-graphql');
-var { graphqlUploadExpress } = require('graphql-upload');
-var authentication = require('./authentication');
-var usersSchema = require('../schemas/users');
+import express from 'express';
+import express_graphql from 'express-graphql';
+import { graphqlUploadExpress } from 'graphql-upload';
 
-module.exports = function(app, passport) {
+import * as authentication from './authentication';
+import * as usersSchema from '../schemas/users';
+
+const v1 = express.Router();
+const v2 = express.Router();
+
+export default function(app, passport) {
 
     // REST
-    app.route('/api/v1/login')
+    v1.route('/login')
+    /**
+     * @api {POST} /api/v1/login Sign in
+     * @apiName Login
+     * @apiGroup Authentication
+     * @apiPermission none
+     *
+     * @apiParam {String} email Email address
+     * @apiParam {String} password Password
+     *
+     * @apiSuccess (200) {String} token JWT
+     * @apiError (401)
+     */
       .post(passport.authenticate('local-login'), authentication.login)
 
-    app.route('/api/v1/register')
+    v1.route('/register')
       .post(passport.authenticate('local-signup'), authentication.register)
 
-    app.route('/api/v1/isloggedin')
+    v1.route('/isloggedin')
       .get(authentication.isLoggedIn)
 
     // Graphql
-    app.route('/api/v2/graphql')
+    v2.route('/graphql')
       .post(
           graphqlUploadExpress({
             maxFileSize: 10000000,
             maxFiles: 10
           }),
           express_graphql({
-          schema: usersSchema.schema,
-          rootValue: usersSchema.resolver,
+          schema: usersSchema.default.schema,
+          rootValue: usersSchema.default.resolver,
           graphiql: false
         })
       )
+
+    app.use('/api/v1', v1);
+    app.use('/api/v2', v2)
 
 }

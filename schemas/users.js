@@ -1,6 +1,8 @@
-var { buildSchema } = require('graphql');
+import { buildSchema } from 'graphql';
+import { GraphQLUpload } from 'graphql-upload'
 
-var usersSchema = buildSchema(`
+
+const usersSchema = buildSchema(`
 
     type Query {
       users: [User]
@@ -25,7 +27,7 @@ var usersSchema = buildSchema(`
 
 `);
 
-var users = [
+let users = [
   {
     _id: '1',
     email: 'test@test.com'
@@ -40,23 +42,23 @@ var users = [
   }
 ];
 
-var getUsers = function(args) {
+const getUsers = (args) => {
 
   return users;
 
 }
 
-var getUser = function(args) {
+const getUser = (args) => {
 
-  var id = args._id;
+  let id = args._id;
 
   return users.filter( user => user._id === id)[0];
 
 }
 
-var createUser = function(args) {
+const createUser = (args) => {
 
-  var newUser = {
+  let newUser = {
     _id: (users.length + 1).toString(),
     email: args.email
   }
@@ -67,7 +69,7 @@ var createUser = function(args) {
 
 }
 
-var uploadFile = function(args) {
+const uploadFile = (args) => {
 
   console.log(args.file)
 
@@ -116,8 +118,9 @@ async sendFile(e) {
 }
 *****************************************************************************/
 
-var root = {
+const root = {
 
+  Upload: GraphQLUpload,
   users: getUsers,
   user: getUser,
   createUser: createUser,
@@ -125,7 +128,7 @@ var root = {
 
 }
 
-module.exports = {
+export default {
   schema: usersSchema,
   resolver: root
 }
