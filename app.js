@@ -7,10 +7,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import passport from 'passport';
-import flash from 'connect-flash';
 import session from 'express-session';
 import config from './config/config';
-import setupPassport from './config/authorization';
+import setupPassport from './authorization/authorization';
 import createRoutes from './routes/index';
 //import upload from 'express-fileupload';
 
@@ -34,7 +33,6 @@ app.use(session({
  }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
 
 createRoutes(app, passport);
 
